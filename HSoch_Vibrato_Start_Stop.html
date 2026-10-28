@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset = "UTF-8">
+    <title> Start Stop Fun</title>
+    </head>
+    <body>
+        <button id = "Start1">Start1</button>
+        <button id = "Stop1">Stop1</button>
+        <input id = "speed" type="range" min ="0.01" max = "40" step="0.01" value="3"><label id = "Speed_Display">Speed</label>
+        <input id = "depth" type="range" min ="1" max = "500" step="1" value="100"><label id = "Depth_Display">Depth</label>
+
+         <script>
+
+
+const ctx = new AudioContext();
+
+let osc1, VibMod, VibModGain
+
+document.querySelector("#Start1").onclick = () =>
+
+{
+
+
+
+osc1 = new OscillatorNode(ctx);
+osc1.frequency.value = 250;
+osc1.type = "sawtooth";
+
+const osc1Gain = new GainNode(ctx);
+osc1Gain.gain.value = 0.1;
+
+osc1.connect(osc1Gain);
+osc1Gain.connect(ctx.destination);
+
+VibMod = new OscillatorNode(ctx);
+VibMod.type = "square"
+VibMod.frequency.value = 4; //speed
+
+VibModGain = new GainNode(ctx);
+VibModGain.gain.value = 100; //depth
+
+
+VibMod.connect(VibModGain);
+VibModGain.connect(osc1.frequency); // try switching to oscillator.detune
+
+osc1.start();
+VibMod.start();
+
+}
+
+document.querySelector("#Stop1").onclick = () =>
+
+{
+
+osc1.stop();
+VibMod.stop();
+
+}
+
+const slider1 = document.querySelector("#speed");
+slider1.addEventListener("input", () => {
+    ctx.resume();
+    VibMod.frequency.value = (Number(slider1.value));
+    document.querySelector("#Speed_Display").textContent = slider1.value;
+    });
+
+const slider2 = document.querySelector("#depth");
+    slider2.addEventListener("input", () => {
+    ctx.resume();
+    VibModGain.gain.value = (Number(slider2.value));
+    document.querySelector("#Depth_Display").textContent = slider2.value;
+    });
+
+</script>
+
+</body>
+
+</html>
